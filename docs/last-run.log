@@ -1,0 +1,5 @@
+# DigitalOcean App Platform job invocation 1eb6a755-d9e1-4b96-af4f-ff69397dc245 (app kb-sync-bot, job daily-sync), 2026-11-20 UTC
+07:45:22,649 INFO optibot.scrape wrote 40 articles to articles (removed 0 stale files)
+07:45:23,330 INFO optibot.upload syncing 40 articles from articles into fileSearchStores/optibotkb-1geyw3g9r6yv
+07:45:29,696 INFO optibot.upload embedded 0 chunks from 0 files | added=0 updated=0 skipped=40 removed=0 failed=0 chunks_deleted=0
+07:45:29,698 INFO optibot.job run complete in 8s: scraped=40 added=0 updated=0 skipped=40 removed=0 failed=0 chunks_uploaded=0

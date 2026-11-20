@@ -116,4 +116,7 @@ doctl auth init
 doctl apps create --spec .do/app.yaml   # then set GEMINI_API_KEY as an encrypted env var on the job
 ```
 
-Job logs: _link added after the first deployed run_.
+Job logs: the [last run artefact](docs/last-run.log) was pulled with
+`doctl apps logs <app-id> daily-sync --type job --job-invocation <id>`. The DigitalOcean console shows the
+live logs to the account owner at
+<https://cloud.digitalocean.com/apps/6b6996b9-7855-4722-bc0a-0644deae6c08/logs>.
