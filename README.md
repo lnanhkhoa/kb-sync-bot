@@ -86,3 +86,34 @@ Gemini's whitespace chunker splits at 512 words, so it never re-splits our chunk
 
 The log line shows the counts, for example
 `embedded 17 chunks from 3 files | added=3 updated=0 skipped=0 removed=0 failed=0`.
+
+## 3. Daily job (Docker + DigitalOcean App Platform)
+
+```bash
+docker build -t optibot-job .
+docker run --rm -e API_KEY=... optibot-job main.py   # one run, exit 0 (1 if any article failed to upload)
+```
+
+`main.py` does three things in one run:
+1. Re-scrapes the help center.
+2. Detects new or changed articles by comparing a SHA-256 of each Markdown file, which includes
+   `updated_at`, with the `content_hash` stored on its documents.
+3. Uploads only that delta.
+
+Unchanged articles are skipped, and articles that are no longer scraped are pruned from the store. It reads
+`GEMINI_API_KEY` (or `API_KEY`), plus `SCRAPE_LIMIT` and `SCRAPE_INCLUDE` (see the docstring). The final log
+line is:
+
+```
+run complete in 9s: scraped=40 added=0 updated=0 skipped=40 removed=0 failed=0 chunks_uploaded=0
+```
+
+Deployment: `.do/app.yaml` defines an App Platform **scheduled job** (`cron: 0 2 * * *` UTC). It builds the
+Dockerfile from this public repo.
+
+```bash
+doctl auth init
+doctl apps create --spec .do/app.yaml   # then set GEMINI_API_KEY as an encrypted env var on the job
+```
+
+Job logs: _link added after the first deployed run_.
