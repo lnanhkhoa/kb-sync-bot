@@ -1,0 +1,24 @@
+# DigitalOcean App Platform spec: one scheduled job that builds the Dockerfile and runs `python main.py` daily.
+# GEMINI_API_KEY is injected at deploy time (see README); never commit its value here.
+name: kb-sync-bot
+region: sgp
+jobs:
+  - name: daily-sync
+    kind: SCHEDULED
+    schedule:
+      cron: "0 2 * * *"
+      time_zone: UTC
+    git:
+      repo_clone_url: https://github.com/lnanhkhoa/kb-sync-bot.git
+      branch: main
+    dockerfile_path: Dockerfile
+    source_dir: /
+    instance_count: 1
+    instance_size_slug: apps-s-1vcpu-1gb
+    envs:
+      - key: GEMINI_API_KEY
+        scope: RUN_TIME
+        type: SECRET
+      - key: SCRAPE_LIMIT
+        scope: RUN_TIME
+        value: "40"
