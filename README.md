@@ -16,7 +16,6 @@ cp .env.sample .env           # set GEMINI_API_KEY (Google AI Studio key)
 uv run python -m optibot.scrape                 # 40 articles -> articles/: the pinned YouTube how-to + 39 most recently updated
 uv run python -m optibot.scrape --limit 30 --include how-to-use-youtube-with-optisigns --out /tmp/articles
 uv run python -m optibot.scrape --limit 0       # every published en-us article (396 today)
-uv run pytest                                   # converter tests
 ```
 
 Source: the public Zendesk Help Center API (`/api/v2/help_center/en-us/articles.json`, sorted by
@@ -120,3 +119,15 @@ Job logs: the [last run artefact](docs/last-run.log) was pulled with
 `doctl apps logs <app-id> daily-sync --type job --job-invocation <id>`. The DigitalOcean console shows the
 live logs to the account owner at
 <https://cloud.digitalocean.com/apps/6b6996b9-7855-4722-bc0a-0644deae6c08/logs>.
+
+## Tests
+
+```bash
+uv run pytest        # or: make test — 20 tests, ~0.3s, no network or API key needed
+```
+
+| File | Covers |
+| --- | --- |
+| `tests/test_markdown.py` | HTML → Markdown: front matter and `Article URL:` line, TOC anchors, relative/absolute links, code fences, media links, callout tables, slug collisions |
+| `tests/test_chunking.py` | Chunks stay ≤ 512 words, keep the title/URL/section header, re-fence split code, rewrite cross-article links; content hash changes with the file |
+| `tests/test_sync.py` | Delta sync against an in-memory store: added / updated / skipped / removed (`--prune`), a failed upload keeps the old version and retries next run, leftover chunks from an interrupted run are cleaned up |
